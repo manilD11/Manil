@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Form</title>
+    <link rel="icon" href="https://thumbs.dreamstime.com/z/form-icon-form-logo-document-icon-simple-vector-icon-form-icon-form-logo-document-icon-white-background-128622826.jpg?ct=jpeg" type="image/jpeg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Register</h1>
+    <div class="ct">
+    <form id="f1" onsubmit="submitt(event)">
+        <label for="name">Name</label><br>
+        <input type="text" id="name" required><br>
+
+        <label for="age">Age</label><br>
+        <input type="number" id="age" min="18" max ="60" required><br>
+
+        <label for="phn">Phone</label><br>
+        <input type="text" id="phn" pattern="\d{10}"  required><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" pattern="^[a-zA-Z0-9]+@(abc|google|example).com$"required><br>
+
+        <label for="fl">Resume:</label><br>
+        <input type="file" id="fl" accept=".pdf,.docx"required><br>
+
+        <button type="submit" id="btn">Submit</button>
+    </form>
+    </div>
+
+
+
+<script>
+function submitt(event) {
+  if (document.getElementById('f1').checkValidity()) {
+    alert('Form Submitted Successfully!');
+  } else {
+    alert('Please fill out all fields correctly.');
+  }
+}
+</script>
+
+</body>
+</html>
