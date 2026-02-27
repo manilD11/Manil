@@ -2,12 +2,11 @@ export default function Home() {
   return (
     <main
       style={{
-        minHeight: "100vh",
+        minHeight: "70vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "4rem 2rem",
-        backgroundColor: "#ffffff",
+        // padding: "-10rem 0rem",
         fontFamily: "Arial, sans-serif",
       }}
     >
