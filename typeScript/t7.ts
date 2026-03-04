@@ -3,4 +3,4 @@ function conCase(text: string): void {
   console.log("Lowercase:", text.toLowerCase());
 }
 
-conCase("Manil");
+conCase("Manil Dev");
