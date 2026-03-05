@@ -1,0 +1,25 @@
+{
+  "name": "exts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "npx tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "cros": "^1.1.0",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.9",
+    "@tsconfig/node22": "^22.0.5",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "typescript": "^5.9.3"
+  }
+}
