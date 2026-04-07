@@ -34,9 +34,19 @@ namespace training.api.Repo
 
         }
 
-        public async Task<List<Region>> GetAll()
+        public async Task<List<Region>> GetAll(string? filterOn = null, string? filterQuery = null)
         {
-            return await dbc.Regions.ToListAsync();
+            //return await dbc.Regions.ToListAsync();
+
+            var walk = dbc.Regions.AsQueryable();
+
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false) {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase)) { 
+                 walk = walk.Where(r => r.Name.Contains(filterQuery));
+                }
+            
+            }
+            return await walk.ToListAsync();
         }
 
         public async Task<Region?> GetById(Guid id)

@@ -45,9 +45,9 @@ namespace training.api.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Getall()
+        public async Task<IActionResult> Getall([FromQuery] string? key, [FromQuery] string? value, [FromQuery] string? sort, [FromQuery] bool? isA, [FromQuery] int pg = 1, [FromQuery] int pSize = 100)
         {
-            var walk = await irepo.GetAll();
+            var walk = await irepo.GetAll(key,value,sort,isA?? true,pg,pSize);
 
             var walks = map.Map<List<WalkDTO>>(walk);
 

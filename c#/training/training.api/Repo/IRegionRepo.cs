@@ -4,7 +4,7 @@ namespace training.api.Repo
 {
     public interface IRegionRepo
     {
-        Task<List<Region>> GetAll();
+        Task<List<Region>> GetAll(string? filterOn=null, string? filterQuery=null);
 
         Task<Region?> GetById(Guid id);
 

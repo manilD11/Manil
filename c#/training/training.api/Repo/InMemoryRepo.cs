@@ -6,7 +6,7 @@ namespace training.api.Repo
     // This is an example to show other Db can be accessed
     public  class InMemoryRepo: IRegionRepo
     {
-        public async Task<List<Region>> GetAll() {
+        public async Task<List<Region>> GetAll(string? filterOn = null, string? filterQuery = null) {
             return new List<Region> { new Region(){
                 Id = Guid.NewGuid(),
                 Code = "007",

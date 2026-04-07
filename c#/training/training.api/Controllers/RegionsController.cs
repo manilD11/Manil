@@ -29,12 +29,12 @@ namespace training.api.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn,[FromQuery] string? filterQuery )
         { 
 
             //var regions = await dbContext.Regions.ToListAsync();
 
-            var regions = await irRepo.GetAll();
+            var regions = await irRepo.GetAll(filterOn, filterQuery);
 
 
             //Manual Mapping 
