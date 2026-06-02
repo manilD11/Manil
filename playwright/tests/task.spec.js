@@ -130,7 +130,7 @@ test('Task5 -SignUp with same email',async({page})=>{
 
 })
 
-test.only('Task 6 -',async({page})=>{
+test('Task 6 -',async({page})=>{
     await expect(page.getByText('Contact us')).toBeVisible()
     await page.getByText("Contact us").click()
 
@@ -151,3 +151,101 @@ test.only('Task 6 -',async({page})=>{
     await expect(page.getByText('Brands')).toBeVisible()
 })
 
+test('Task 7- Verify Test case page',async({page})=>{
+    await page.getByRole('link',{name:'Test Cases'}).first().click()
+    await expect(page).toHaveURL(/test_cases/)
+})
+
+test('Task 8- Verify Product',async({page})=>{
+    await page.getByRole('link',{name:'Products'}).first().click()
+    await expect(page).toHaveURL(/products/)
+    await expect(page.locator(".product-image-wrapper").first()).toBeVisible();
+    await expect(page.locator(".product-image-wrapper").last()).toBeVisible();
+
+    await page.getByRole('link',{name:'View Product'}).first().click()
+
+    await expect(page).toHaveURL(/product_details/)
+
+    await expect(page.locator('.product-information h2')).toBeVisible();
+    await expect(page.locator('.product-information')).toContainText('Category');
+    await expect(page.locator('.product-information')).toContainText('Rs.');
+    await expect(page.locator('.product-information')).toContainText('Availability');
+    await expect(page.locator('.product-information')).toContainText('Condition');
+    await expect(page.locator('.product-information')).toContainText('Brand');
+
+})
+
+test('Task 9 - Search',async({page})=>{
+    await page.getByRole('link',{name:'Products'}).first().click()
+    await expect(page).toHaveURL(/products/)
+
+    await page.fill('#search_product','Top')
+    await page.locator("#submit_search").click()
+
+    await expect(page).toHaveURL(/search/)
+    await expect(page.getByText('Searched Products')).toBeVisible()
+    console.log(await page.locator('.single-products p').allTextContents())
+    const prod= await page.locator('.single-products p').count()
+    console.log(`count:${prod}`)
+    await expect(prod).toBeGreaterThan(0)
+
+})
+
+test('Task 10 - Subcribe 1',async ({page})=>{
+
+    await expect(page.getByRole("heading",{name:'Subscription'})).toBeVisible()
+    await page.fill("#susbscribe_email","abc@io.com")
+    await page.locator("#subscribe").click()
+    await expect(page.getByText('You have been successfully subscribed!')).toBeVisible()
+})
+
+test(' Task 11 - Subscribe 2', async({page})=>{
+    await page.getByRole('link',{name:'Cart'}).first().click()
+    await expect(page).toHaveURL(/view_cart/)
+
+    await expect(page.getByRole("heading",{name:'Subscription'})).toBeVisible()
+    await page.fill("#susbscribe_email","abc@io.com")
+    await page.locator("#subscribe").click()
+    await expect(page.getByText('You have been successfully subscribed!')).toBeVisible()
+
+})
+
+test.only('Task 12 - Add to cart', async({page})=>{
+    await page.getByRole('link',{name:'Products'}).first().click()
+    await expect(page).toHaveURL(/products/)
+
+    await page.locator(".single-products").first().hover()
+    await expect(page.locator('.product-overlay .add-to-cart[data-product-id="1"]')).toBeVisible()
+    await page.locator('.product-overlay .add-to-cart[data-product-id="1"]').click()
+
+    await expect(page.locator('.modal-content')).toBeVisible();
+    await page.getByText('Continue Shopping').click()
+
+
+    await page.locator(".single-products").nth(1).hover()
+    await expect(page.locator('.product-overlay .add-to-cart[data-product-id="2"]')).toBeVisible()
+    await page.locator('.product-overlay .add-to-cart[data-product-id="2"]').click()
+
+    await expect(page.locator('.modal-content')).toBeVisible();
+
+    await page.getByRole('link',{name:'View Cart'}).click()
+
+    await expect(page).toHaveURL(/view_cart/)
+    await expect(page.locator('#cart_info_table')).toBeVisible()
+
+    await expect(page.locator("#product-1")).toBeVisible()
+    await expect(page.locator("#product-2")).toBeVisible()
+
+    await expect(page.getByText('Blue Top')).toBeVisible()
+    await expect(page.getByText('Men Tshirt')).toBeVisible()
+
+	
+    await expect(page.locator('#product-1 .cart_price')).toContainText('Rs.')
+    await expect(page.locator('#product-1 .cart_quantity')).toContainText('1')
+    await expect(page.locator('#product-1 .cart_total_price')).toContainText('Rs.')
+    
+    await expect(page.locator('#product-2 .cart_price')).toContainText('Rs.')
+    await expect(page.locator('#product-2 .cart_quantity')).toContainText('1')
+    await expect(page.locator('#product-2 .cart_total_price')).toContainText('Rs.')
+  
+})
