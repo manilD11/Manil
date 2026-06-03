@@ -45,5 +45,5 @@ export default async function reg (page,name,email,password){
     await page.getByRole("link",{name:'Continue'}).click()
 
     await expect(page.getByText(`Logged in as ${name}`)).toBeVisible()
-    await page.getByText("Logout").click()
+   
 }

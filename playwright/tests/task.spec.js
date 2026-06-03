@@ -1,7 +1,9 @@
 import {test,expect} from "@playwright/test";
 import reg from "./reg";
 
-test.beforeEach(async({page})=>{
+test.setTimeout(60000) 
+test.beforeEach(async({page, context})=>{
+    await context.clearCookies()
     await page.goto("https://automationexercise.com/")
     await expect(page).toHaveTitle('Automation Exercise')   
 })
@@ -66,6 +68,7 @@ test('Task1-Register User',async({page})=>{
 test("Task-2 Login",async({page})=>{
     const email = `rajat${Date.now()}@test.com`;
     await reg(page, "Rajat", email, "abc123");
+    await page.getByText("Logout").click()
 
 
     //login 
@@ -84,6 +87,7 @@ test("Task-2 Login",async({page})=>{
     
     await expect(page.getByText("Logged in as Rajat")).toBeVisible()
     await expect(page.getByText("Delete Account")).toBeVisible()
+    await expect(page.getByText("Delete Account")).toBeVisible()
     await page.getByText("Delete Account").click()
 
     await expect(page).toHaveURL(/delete_account/)
@@ -94,6 +98,7 @@ test("Task-2 Login",async({page})=>{
 test("Task-3 Error-Login",async({page})=>{
     const email = `rajat${Date.now()}@test.com`;
     await reg(page, "Rajat", email, "abc123");
+    await page.getByText("Logout").click()
 
     //login 
 
@@ -113,6 +118,7 @@ await expect(page.getByText('Your email or password is incorrect!')).toBeVisible
 test('Task 4 - Logout', async({page})=>{
     const email = `boss${Date.now()}@abc.com`
     await reg(page,'boss',email,'12345678')
+    await page.getByText("Logout").click()
 })
 
 test('Task5 -SignUp with same email',async({page})=>{
@@ -130,7 +136,7 @@ test('Task5 -SignUp with same email',async({page})=>{
 
 })
 
-test('Task 6 -',async({page})=>{
+test('Task 6 - Contact form',async({page})=>{
     await expect(page.getByText('Contact us')).toBeVisible()
     await page.getByText("Contact us").click()
 
@@ -210,7 +216,7 @@ test(' Task 11 - Subscribe 2', async({page})=>{
 
 })
 
-test.only('Task 12 - Add to cart', async({page})=>{
+test('Task 12 - Add to cart', async({page})=>{
     await page.getByRole('link',{name:'Products'}).first().click()
     await expect(page).toHaveURL(/products/)
 
@@ -248,4 +254,207 @@ test.only('Task 12 - Add to cart', async({page})=>{
     await expect(page.locator('#product-2 .cart_quantity')).toContainText('1')
     await expect(page.locator('#product-2 .cart_total_price')).toContainText('Rs.')
   
+})
+
+test('Task 13 - Prod quantity',async({page})=>{
+    await page.getByRole('link',{name:'View Product'}).nth(5).click()
+    await expect(page).toHaveURL(/product_details/)
+
+    await page.locator('#quantity').fill('4')
+    await page.getByRole('button',{name:' Add to cart'}).click()
+
+    await expect(page.locator('.modal-content')).toBeVisible()
+    await page.getByRole('link',{name:'View Cart'}).click()
+    await expect(page).toHaveURL(/view_cart/)
+
+    await expect(page.locator('#cart_info')).toBeVisible()
+    await expect(page.locator('#product-6 .cart_quantity')).toContainText('4') 
+})
+
+test('Test 14 - regiester while checout', async({page})=>{
+ 
+    await expect(page.locator('.single-products .add-to-cart[data-product-id="1"]').first()).toBeVisible()
+    await page.locator('.single-products .add-to-cart[data-product-id="1"]').first().click()
+
+   
+    await expect(page.locator('.modal-content')).toBeVisible()
+    await page.getByRole('button',{name:'Continue Shopping'}).click()
+
+    await page.getByRole('link',{name:'Cart'}).first().click()
+    await expect(page).toHaveURL(/view_cart/)
+    await expect(page.locator('#cart_info')).toBeVisible()
+
+    await page.getByText('Proceed To Checkout').click()
+
+    await expect(page.locator('.modal-content')).toContainText("Register / Login account to proceed on checkout.")
+    await page.getByRole('link',{name:'Register / Login'}).click()
+
+    const email = `rajat${Date.now()}@test.com`;
+    await reg(page, "Rajat", email, "abc123");
+
+    await page.getByRole('link',{name:'Cart'}).first().click()
+    await expect(page).toHaveURL(/view_cart/)
+    await page.getByText('Proceed To Checkout').click()
+    await expect(page).toHaveURL(/checkout/)
+
+    await expect(page.locator('#address_delivery')).toContainText('Your delivery address')
+    await expect(page.locator('#address_invoice')).toContainText('Your billing address')
+
+    await expect(page.locator('#cart_info')).toBeVisible()
+
+    await page.locator('.form-control').fill("Call before coming")
+    await page.getByRole('link',{name:'Place Order'}).click()
+
+    await expect(page).toHaveURL(/payment/)
+
+    await page.locator('[data-qa="name-on-card"]').fill('Raju')
+    await page.locator('[data-qa="card-number"]').fill('123456789')
+    await page.locator('[data-qa="cvc"]').fill('232')
+    await page.locator('[data-qa="expiry-month"]').fill('4')
+    await page.locator('[data-qa="expiry-year"]').fill('2029')
+
+    await page.getByText('Pay and Confirm Order').click()
+    // await expect(page.locator('#success_message')).toContainText('Your order has been placed successfully!')
+    await expect(page).toHaveURL(/payment_done/)
+
+    await expect(page.getByText("Delete Account")).toBeVisible()
+    await page.getByRole('link',{name:'Delete Account'}).click()
+
+    await expect(page).toHaveURL(/delete_account/)
+    await expect(page.getByText("Account DELETED!")).toBeVisible()
+    await page.getByRole("link",{name:'Continue'}).click()
+})
+
+test('Task-15 before checkout', async({page})=>{
+
+    const email = `rajat${Date.now()}@test.com`;
+    await reg(page, "Rajat", email, "abc123");
+
+    await expect(page.locator('.single-products .add-to-cart[data-product-id="1"]').first()).toBeVisible()
+    await page.locator('.single-products .add-to-cart[data-product-id="1"]').first().click()
+
+   
+    await expect(page.locator('.modal-content')).toBeVisible()
+    await page.getByRole('button',{name:'Continue Shopping'}).click()
+
+    await page.getByRole('link',{name:'Cart'}).first().click()
+    await expect(page).toHaveURL(/view_cart/)
+    await expect(page.locator('#cart_info')).toBeVisible()
+
+    await page.getByText('Proceed To Checkout').click()
+    await expect(page).toHaveURL(/checkout/)
+
+    await expect(page.locator('#address_delivery')).toContainText('Your delivery address')
+    await expect(page.locator('#address_invoice')).toContainText('Your billing address')
+
+    await expect(page.locator('#cart_info')).toBeVisible()
+
+    await page.locator('.form-control').fill("Call before coming")
+    await page.getByRole('link',{name:'Place Order'}).click()
+
+    await expect(page).toHaveURL(/payment/)
+
+    await page.locator('[data-qa="name-on-card"]').fill('Raju')
+    await page.locator('[data-qa="card-number"]').fill('123456789')
+    await page.locator('[data-qa="cvc"]').fill('232')
+    await page.locator('[data-qa="expiry-month"]').fill('4')
+    await page.locator('[data-qa="expiry-year"]').fill('2029')
+
+    await page.getByText('Pay and Confirm Order').click()
+    // await expect(page.locator('#success_message')).toContainText('Your order has been placed successfully!')
+    await expect(page).toHaveURL(/payment_done/)
+
+    await expect(page.getByText("Delete Account")).toBeVisible()
+    await page.getByRole('link',{name:'Delete Account'}).click()
+
+    await expect(page).toHaveURL(/delete_account/)
+    await expect(page.getByText("Account DELETED!")).toBeVisible()
+    await page.getByRole("link",{name:'Continue'}).click()
+
+})
+
+test('Task-16 login', async({page})=>{
+ 
+    const email = `rajat${Date.now()}@test.com`;
+    await reg(page, "Rajat", email, "abc123");
+    await page.getByText("Logout").click()
+
+    await expect(page.getByRole("link",{name: 'Signup / Login'})).toBeVisible()
+    await page.getByRole("link",{name: 'Signup / Login'}).click()
+
+    await expect(page).toHaveURL(/login/)
+    await expect(page.getByText("Login to your account")).toBeVisible()
+
+    await page.locator('[data-qa="login-email"]').fill(email);
+    await page.locator("[data-qa='login-password']").fill("abc123")
+
+    await page.getByRole("button",{name:"Login"}).click()
+
+    await expect(page.locator('.single-products .add-to-cart[data-product-id="1"]').first()).toBeVisible()
+    await page.locator('.single-products .add-to-cart[data-product-id="1"]').first().click()
+
+   
+    await expect(page.locator('.modal-content')).toBeVisible()
+    await page.getByRole('button',{name:'Continue Shopping'}).click()
+
+    await page.getByRole('link',{name:'Cart'}).first().click()
+    await expect(page).toHaveURL(/view_cart/)
+    await expect(page.locator('#cart_info')).toBeVisible()
+
+    await page.getByText('Proceed To Checkout').click()
+    await expect(page).toHaveURL(/checkout/)
+
+    await expect(page.locator('#address_delivery')).toContainText('Your delivery address')
+    await expect(page.locator('#address_invoice')).toContainText('Your billing address')
+
+    await expect(page.locator('#cart_info')).toBeVisible()
+
+    await page.locator('.form-control').fill("Call before coming")
+    await page.getByRole('link',{name:'Place Order'}).click()
+
+    await expect(page).toHaveURL(/payment/)
+
+    await page.locator('[data-qa="name-on-card"]').fill('Raju')
+    await page.locator('[data-qa="card-number"]').fill('123456789')
+    await page.locator('[data-qa="cvc"]').fill('232')
+    await page.locator('[data-qa="expiry-month"]').fill('4')
+    await page.locator('[data-qa="expiry-year"]').fill('2029')
+
+    await page.getByText('Pay and Confirm Order').click()
+    await expect(page).toHaveURL(/payment_done/)
+
+    await expect(page.getByText("Delete Account")).toBeVisible()
+    await page.getByRole('link',{name:'Delete Account'}).click()
+
+    await expect(page).toHaveURL(/delete_account/)
+    await expect(page.getByText("Account DELETED!")).toBeVisible()
+    await page.getByRole("link",{name:'Continue'}).click()
+
+})
+
+test('Task-17 remove item ',async({page})=>{
+    await expect(page.locator('.single-products .add-to-cart[data-product-id="1"]').first()).toBeVisible()
+    await page.locator('.single-products .add-to-cart[data-product-id="1"]').first().click()
+    await page.getByText('Continue Shopping').click()
+
+    await page.getByRole('link',{name:'Cart'}).first().click()
+    await expect(page).toHaveURL(/view_cart/)
+    await expect(page.locator('#cart_info_table')).toBeVisible()
+
+    await page.locator('.cart_quantity_delete').click()
+    await expect(page.getByText('Cart is empty!')).toBeVisible()
+    await expect(page.locator('#cart_info_table')).not.toBeVisible()
+})
+
+test.only('Task 18 - Category', async ({ page })=>{
+    await expect(page.locator('.left-sidebar')).toContainText('Category')
+
+    await page.getByRole('link', { name: ' Women' }).first().click()
+    await expect(page.locator('.panel-body').first()).toBeVisible()
+    await page.locator('.panel-body').first().getByText('Dress').click()
+    await expect(page.getByText('Women - Dress Products')).toBeVisible()
+
+    await page.getByRole('link', { name: ' Men' }).click()
+    await page.getByRole('link',{name:'Tshirts'}).click()
+    await expect(page.getByText('Men - Tshirts Products')).toBeVisible()
 })
