@@ -1,7 +1,6 @@
 import {test,expect} from "@playwright/test";
 import reg from "./reg";
-import { link } from "node:fs";
-import { exec } from "node:child_process";
+
 
 test.setTimeout(60000) 
 test.beforeEach(async({page, context})=>{
