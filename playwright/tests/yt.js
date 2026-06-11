@@ -6,7 +6,7 @@ class YouTube{
         this.search = page.getByPlaceholder("Search")
         this.sbtn = page.locator('//button[@title="Search"]')
         this.body = page.locator('body')
-        this.first= page.locator("//div[@id='content']").first()
+        this.first= this.page.locator('.ytLockupMetadataViewModelTitle').first()
     //     this.skip = page.locator('.ytp-skip-ad-button');
     //     this.skip1 = page.locator('.ytp-skip-ad-button .ytp-ad-component--clickable');
     //     this.skip2 = page.locator("//button[@id='skip-button:g']")
@@ -19,7 +19,7 @@ class YouTube{
         await this.search.fill("Playwright");
         await this.page.keyboard.press("Enter");
 
-        await this.page.locator('.ytLockupMetadataViewModelTitle').first().click();
+        await this.first.click();
         
         if(!(await this.page.url().includes("watch"))) throw new Error("Not playing");
 
